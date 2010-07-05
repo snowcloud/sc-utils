@@ -1,0 +1,1 @@
+A few odds and ends useful across multiple projects
