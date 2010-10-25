@@ -6,7 +6,7 @@ register = template.Library()
 
 @register.simple_tag
 def site_base():
-	return settings.APP_BASE
+	return getattr(settings, 'APP_BASE', '/')
 
 @register.simple_tag
 def static_base():
