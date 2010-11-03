@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(
-    name='Snowcloud Utils',
+    name='snowcloud-utils',
     version='0.1',
     packages=['scutils',],
     license='Creative Commons Attribution-Noncommercial-Share Alike license',
