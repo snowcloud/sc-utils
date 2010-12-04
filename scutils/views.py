@@ -56,7 +56,7 @@ def check_sec_link(secret, token, hextime, rel_path):
         diff =  time.gmtime(secsnow - secs)
         # these are secs from epoch - 1970, 1, 1, ...
         # this will check diff is less than 24 hrs
-        in_time = diff[0] == 1970 and diff[1] == 1 and diff[2] == 1
+        in_time = diff[0] == 1970 and diff[1] == 1 and diff[2] < 3
     return token_ok, in_time
     
 from django.shortcuts import render_to_response
