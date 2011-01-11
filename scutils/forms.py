@@ -66,7 +66,7 @@ class SimpleStaticSiteContactForm(ContactForm):
     
     def clean(self):
             cleaned_data = self.cleaned_data
-            addr = self.request.META['REMOTE_ADDR']
+            addr = self.request.META['SERVER_ADDR']
             origin = self.request.META['HTTP_ORIGIN']
             
             cred = settings.EXT_CONTACTMAIL.get(origin, None)
