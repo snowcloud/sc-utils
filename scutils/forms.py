@@ -68,7 +68,7 @@ class SimpleStaticSiteContactForm(ContactForm):
     def clean(self):
             cleaned_data = self.cleaned_data
             addr = self.request.META['SERVER_ADDR']
-            origin = self.request.META.get('HTTP_ORIGIN', None) or 
+            origin = self.request.META.get('HTTP_ORIGIN', None) or \
                         self.request.META['HTTP_REFERER']
             from urlparse import urlparse
             h = urlparse(origin)
