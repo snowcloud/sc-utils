@@ -83,3 +83,69 @@ def mini_render_to_response(template, try_mobile = False, *args, **kwargs):
     
     return render
 
+"""
+View which can render and send email from a contact form.
+Modified from contact_form.views.py
+Needs to:
+    - only respond to POST
+    - read success_url from the form data
+    - read error_url from the form data
+Form does vlaidation
+"""
+
+from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.template import RequestContext
+from django.views.decorators.csrf import csrf_exempt
+
+from scutils.forms import SimpleStaticSiteContactForm
+
+@csrf_exempt
+def external_contact_form(request, form_class=SimpleStaticSiteContactForm,
+                 extra_context=None,
+                 fail_silently=False):
+    """
+    Render a contact form, validate its input and send an email
+    from it.
+
+    **Optional arguments:**
+
+    ``extra_context``
+        A dictionary of variables to add to the template context. Any
+        callable object in this dictionary will be called to produce
+        the end result which appears in the context.
+
+    ``fail_silently``
+        If ``True``, errors when sending the email will be silently
+        supressed (i.e., with no logging or reporting of any such
+        errors. Default value is ``False``.
+
+    ``form_class``
+        The form to use. If not supplied, this will default to
+        ``contact_form.forms.ContactForm``. If supplied, the form
+        class must implement a method named ``save()`` which sends the
+        email from the form; the form class must accept an
+        ``HttpRequest`` as the keyword argument ``request`` to its
+        constructor, and it must implement a method named ``save()``
+        which sends the email and which accepts the keyword argument
+        ``fail_silently``.
+
+    **Context:**
+
+    ``form``
+        The form instance.
+    """
+    fail_url = None
+    if request.method == 'POST':
+        fail_url = request.POST.get('fail_url', None)
+        form = form_class(data=request.POST, files=request.FILES, request=request)
+        if form.is_valid():
+            form.save(fail_silently=fail_silently)
+            return HttpResponseRedirect(form.cleaned_data['success_url'])
+        else:
+            if fail_url:
+                return HttpResponseRedirect(fail_url)
+    
+    raise Http404
+
+    # return HttpResponse("Hello, world.")
+

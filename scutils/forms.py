@@ -2,9 +2,11 @@ from django import forms
 from django.utils.translation import ugettext_lazy as _
 
 # requires django-contact-form
-from contact_form.views import contact_form
+# from contact_form.views import contact_form
 from contact_form.forms import ContactForm, attrs_dict
 from django.conf import settings
+
+from bleach import Bleach
 
 
 class SCContactForm(ContactForm):
@@ -28,3 +30,53 @@ class SCContactForm(ContactForm):
 
         return data
     
+
+class SimpleStaticSiteContactForm(ContactForm):
+    """Used to allow external static sites to send mail from a simple form.
+    No error checking.
+    Bleach used to clean up content.
+    """
+    name = forms.CharField(max_length=100, required=False)
+    email = forms.CharField(max_length=200, required=False)
+    body = forms.CharField(max_length=600, required=False)
+    success_url = forms.CharField(max_length=200)
+    fail_url = forms.CharField(max_length=200)
+                            
+    def subject(self):
+        """
+        Render the subject of the message to a string.
+        
+        """
+        # subject = loader.render_to_string(self.subject_template_name,
+        #                                   self.get_context())
+        return 'subject here...'
+    
+    def clean_name(self):
+        """docstring for clean_name"""
+        data = self.cleaned_data['name']
+        return Bleach().clean(self.cleaned_data['name'])
+
+    def clean_email(self):
+        data = self.cleaned_data['email']
+        return Bleach().clean(self.cleaned_data['email'])
+
+    def clean_body(self):
+        data = self.cleaned_data['body']
+        return Bleach().clean(self.cleaned_data['body'])
+    
+    def clean(self):
+            cleaned_data = self.cleaned_data
+            addr = self.request.META['REMOTE_ADDR']
+            origin = self.request.META['HTTP_ORIGIN']
+            
+            cred = settings.EXT_CONTACTMAIL.get(origin, None)
+        
+            if cred and addr in cred.get('ip', []):
+                # #     EXT_CONTACTMAIL = {
+                #         # HTTP_ORIGIN, REMOTE_ADDR
+                #         'http://www.ganzie.com': {'ip': ['127.0.0.1'], 'send_to': ['derek.hoy@gmail.com', 'derek@rarebits']},
+            
+                self.recipient_list = cred['send_to']
+                return cleaned_data
+                        
+            raise forms.ValidationError('failed validation against settings')
