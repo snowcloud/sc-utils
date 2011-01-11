@@ -41,6 +41,7 @@ class SimpleStaticSiteContactForm(ContactForm):
     body = forms.CharField(max_length=600, required=False)
     success_url = forms.CharField(max_length=200)
     fail_url = forms.CharField(max_length=200)
+    subject_txt = 'contact message'
                             
     def subject(self):
         """
@@ -49,7 +50,7 @@ class SimpleStaticSiteContactForm(ContactForm):
         """
         # subject = loader.render_to_string(self.subject_template_name,
         #                                   self.get_context())
-        return 'subject here...'
+        return self.subject_txt
     
     def clean_name(self):
         """docstring for clean_name"""
@@ -77,6 +78,7 @@ class SimpleStaticSiteContactForm(ContactForm):
                 #         'http://www.ganzie.com': {'ip': ['127.0.0.1'], 'send_to': ['derek.hoy@gmail.com', 'derek@rarebits']},
             
                 self.recipient_list = cred['send_to']
+                self.subject_txt = cred['subject']
                 return cleaned_data
                         
             raise forms.ValidationError('failed validation against settings')
