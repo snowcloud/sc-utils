@@ -10,12 +10,9 @@ def set_vars(request):
     except AttributeError:
         allow_anon_users = False
     context_extras = {}
-    try:
-        context_extras['REQ_PATH'] = request.path
-        context_extras['REQ_FULL_PATH'] = request.get_full_path()
-        context_extras['ALLOW_ANON_USERS'] = allow_anon_users
-    except AttributeError:
-        pass
+    context_extras['REQ_PATH'] = request.path
+    context_extras['REQ_FULL_PATH'] = request.get_full_path()
+    context_extras['ALLOW_ANON_USERS'] = allow_anon_users
     return context_extras
 
 
