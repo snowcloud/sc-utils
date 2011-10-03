@@ -31,6 +31,8 @@ from django.conf import settings
 from django.contrib.auth.views import login
 from django.http import HttpResponseRedirect
 
+import re
+
 class RequireLoginMiddleware(object):
     """
     Require Login middleware. If enabled, each Django-powered page will
@@ -53,16 +55,9 @@ class RequireLoginMiddleware(object):
     
     def allowed_path(self, requested_path):
         for p in settings.AUTH_ALLOWED_PATHS:
-            if requested_path.startswith(p):
-                print p
+            if re.search(p, requested_path):
                 return True
-        path = requested_path.split('/')[1]
-        if path in settings.AUTH_ALLOWED_PATHS:
-            return True
         return requested_path == self.require_login_path
-
-# 
-
 
 class AdminRedirectMiddleware:
     """ allows you to customize redirects with the GET line in the admin """
