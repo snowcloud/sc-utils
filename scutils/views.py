@@ -53,9 +53,7 @@ def check_sec_link(secret, token, daystr, rel_path):
         try:
             t1,t2,t3 = daystr.split('-')
             day = date(int(t1),int(t2),int(t3))
-            # today = date.today().strftime('%Y-%m-%d')
             timedelta = date.today() - day
-            print 'timedelta', timedelta.days
             in_time = timedelta.days >= 0 and timedelta.days <= 1
         except:
             pass
