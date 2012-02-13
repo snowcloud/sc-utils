@@ -8,6 +8,10 @@ from django.http import Http404
 register = Library()
 
 @register.filter
+def split(value, sep=','):
+    return [v.strip() for v in value.split(sep)]
+
+@register.filter
 def date_tz(value, arg=settings.DATE_FORMAT, tz=settings.TIME_ZONE):
     """ Takes UTC datetime value and formats as string in required timezone
             Requires pytz package - http://pytz.sourceforge.net/
