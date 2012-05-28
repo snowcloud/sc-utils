@@ -25,7 +25,7 @@ class SCContactForm(ContactForm):
 
     def clean_body(self):
         data = self.cleaned_data['body']
-        if data.find('http:') > -1:
+        if (data.find('http:') > -1) or (data.find('urlhttp') > -1):
             raise forms.ValidationError("Please remove any links in your message.")
 
         return data
